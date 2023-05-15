@@ -1,0 +1,11 @@
+services:
+  tapestryviewer:
+    build: ./
+    environment:
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      GOOGLE_SERVICE_ACCOUNT_EMAIL: ${GOOGLE_SERVICE_ACCOUNT_EMAIL}
+      GOOGLE_PRIVATE_KEY: ${GOOGLE_PRIVATE_KEY}
+      GOOGLE_SHEETS_ID: ${GOOGLE_SHEETS_ID}
+    ports:
+      - 3000:3000
+    command: node ./build/index.js
