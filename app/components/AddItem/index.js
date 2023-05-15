@@ -208,7 +208,7 @@ const AddItem = ({
                 // const theUrl = `http://archive.org/wayback/available?url=${deslashed}`;
                 // console.log(theUrl);
                 setMessage("Querying Internet Archive . . .");
-                await fetch(`/.netlify/functions/memento`, {
+                await fetch(`/api/memento`, {
                   method: "POST",
                   body: JSON.stringify({ url: deslashed }),
                 })
@@ -243,7 +243,7 @@ const AddItem = ({
               const urlReplaced = url
                 .replace("https://", "")
                 .replace("http://", "");
-              await fetch(`/.netlify/functions/checkwayback`, {
+              await fetch(`/api/checkwayback`, {
                 method: "POST",
                 body: JSON.stringify({ url: urlReplaced }),
               })
@@ -256,7 +256,7 @@ const AddItem = ({
                     setMessage(
                       "This is on the Internet Archive. Querying Internet Archive . . ."
                     );
-                    await fetch(`/.netlify/functions/memento`, {
+                    await fetch(`/api/memento`, {
                       method: "POST",
                       body: JSON.stringify({ url: urlReplaced }),
                     })

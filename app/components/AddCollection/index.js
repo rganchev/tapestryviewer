@@ -30,7 +30,7 @@ const AddCollection = ({ setAddCollection, segments, setSegments, id }) => {
           // NOTE: this only finds collection IDs in the form "archive.org/details/collectionId/"
           // If there are other types, it won't find them!
           setMessage(`Looking for a collection named "${collectionId}"...`);
-          await fetch(`/.netlify/functions/getcollection`, {
+          await fetch(`/api/getcollection`, {
             method: "POST",
             body: JSON.stringify({ url: collectionId }),
           })

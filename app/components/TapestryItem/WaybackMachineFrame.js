@@ -14,7 +14,7 @@ const WaybackMachineFrame = ({ title, url, hideTitle, titleClick }) => {
     const getDates = async () => {
       // console.log("querying for dates!");
       // console.log(deslashed);
-      await fetch(`/.netlify/functions/memento`, {
+      await fetch(`/api/memento`, {
         method: "POST",
         body: JSON.stringify({ url: deslashed }),
       })

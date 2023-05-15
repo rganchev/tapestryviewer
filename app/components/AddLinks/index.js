@@ -22,7 +22,7 @@ const AddLinks = ({ setAddCollection, segments, setSegments, id }) => {
         // NOTE: this only finds collection IDs in the form "archive.org/details/collectionId/"
         // If there are other types, it won't find them!
         setMessage(`Checking for links on "${url}"...`);
-        await fetch(`/.netlify/functions/getlinks`, {
+        await fetch(`/api/getlinks`, {
           method: "POST",
           body: JSON.stringify({ url: url }),
         })

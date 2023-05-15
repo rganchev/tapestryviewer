@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-} from "remix";
+} from "@remix-run/react";
 import { getTapestries } from "~/tapestryData";
 import globalStyles from "~/styles/global.css";
 
