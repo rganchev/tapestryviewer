@@ -1,6 +1,6 @@
 // const { GoogleSpreadsheet } = require("google-spreadsheet");
-import Tapestry from "./models/tapestry.mjs";
-import Item from "./models/item.mjs";
+import { Tapestry } from "~/../models/Tapestry";
+import { Item } from "~/../models/Item";
 import googleData from "./data/googledata.json";
 
 console.log("running tapestrydata.js");
@@ -226,6 +226,7 @@ const manualTapestries = [
 
 // get google spreadsheets
 
+/*
 const getDownloadedGoogleData = async () => {
   const googleTapestries = [];
   const listOfGoogleIds = [];
@@ -305,15 +306,33 @@ const getDownloadedGoogleData = async () => {
 
   return googleTapestries;
 };
+*/
 
+/*
 export async function getTapestries() {
   const googleTapestries = await getDownloadedGoogleData();
   const tapestries = [...manualTapestries, ...googleTapestries];
   return tapestries;
 }
+*/
 
+export async function getTapestries() {
+  const googleTapestries = await Tapestry.query().withGraphFetched('items');
+  const tapestries = [...manualTapestries, ...googleTapestries];
+  return tapestries;
+}
+
+/*
 export async function getTapestryFromSlug(slug) {
   const googleTapestries = await getDownloadedGoogleData();
   const tapestries = [...manualTapestries, ...googleTapestries];
   return tapestries.find((t) => t.slug === slug) || null;
 }
+*/
+
+export async function getTapestryFromSlug(slug) {
+  const googleTapestries = await Tapestry.query().where('slug', slug).withGraphFetched('items');
+  const tapestries = [...manualTapestries, ...googleTapestries];
+  return tapestries.find((t) => t.slug === slug) || null;
+}
+
