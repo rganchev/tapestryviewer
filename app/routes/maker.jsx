@@ -15,12 +15,16 @@ import megadraftStyles from "megadraft/dist/css/megadraft.css";
 // TODO: on save of existing tapesty: make a new function that does a lot of puts.
 
 const fireWebhook = async (url) => {
-  console.log("firing webhook:", url);
-  await fetch(url, {
-    method: "POST",
-  }).then((res) => {
-    console.log(res);
-  });
+  if(url) {
+    console.log("firing webhook:", url);
+    await fetch(url, {
+      method: "POST",
+    }).then((res) => {
+      console.log(res);
+    });
+  } else {
+    console.log("skipping webhook:", url);
+  }
 };
 
 export const loader = () => {
@@ -129,9 +133,9 @@ export default function MakerPage() {
       };
       // console.log(payload);
       setMessage(`Sending tapestry data: \n\n ${JSON.stringify(row)}`);
-      await fetch("/.netlify/functions/googlesheets", {
+      await fetch("/api/tapestries", {
         method: "POST",
-        body: JSON.stringify({ tapestry: payload.tapestry }),
+        body: JSON.stringify(payload.tapestry),
       })
         .then((res) => res.json())
         .then(async (response) => {
@@ -144,9 +148,9 @@ export default function MakerPage() {
               )}`
             );
             // console.log(payload.items[i]);
-            await fetch("/.netlify/functions/googlesheets", {
+            await fetch("/api/items", {
               method: "POST",
-              body: JSON.stringify({ item: payload.items[i] }),
+              body: JSON.stringify(payload.items[i]),
             })
               .then((res) => res.json())
               .then((response) => {
@@ -199,9 +203,9 @@ export default function MakerPage() {
       };
       console.log("Payload: ", payload);
       // TODO: make new function to send in modified data, add in new data
-      await fetch(`/.netlify/functions/googlesheets/${row.id}`, {
+      await fetch(`/api/tapestries/${payload.tapestry.id}`, {
         method: "PUT",
-        body: JSON.stringify({ tapestry: payload.tapestry }),
+        body: JSON.stringify(payload.tapestry),
       })
         .then((res) => res.json())
         .then(async (response) => {
@@ -215,10 +219,10 @@ export default function MakerPage() {
             );
             // console.log(payload.items[i]);
             await fetch(
-              `/.netlify/functions/googlesheets/${payload.items[i].id}`,
+              `/api/items/${payload.items[i].id}`,
               {
                 method: "PUT",
-                body: JSON.stringify({ item: payload.items[i] }),
+                body: JSON.stringify(payload.items[i]),
               }
             )
               .then((res) => res.json())
