@@ -19,11 +19,11 @@ export const action = async ({request, params}) => {
       case "PUT":
         try {
           const tapestry = await request.json();
-          delete tapestry.id;
           const id = params.id;
+          tapestry.id = id;
           const numUpdated = await Tapestry.query().findById(id).patch(tapestry);
           if (numUpdated === 0) {
-            await Item.query().insert(item);
+            console.log("This tapestry doesn't exist!", id);
           }
           return {
             statusCode: 200,

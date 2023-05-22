@@ -19,17 +19,18 @@ export const action = async ({request, params}) => {
       case "PUT":
         try {
           const item = await request.json();
-          delete item.id;
           const id = params.id;
+          item.id = id;
           const numUpdated = await Item.query().findById(id).patch(item);
           if (numUpdated === 0) {
-            console.log("This item doesn't exist!", id);
+            await Item.query().insert(item);
           }
           return {
             statusCode: 200,
             body: JSON.stringify({ message: "PUT is a success!" }),
           };
         } catch(err) {
+          console.log(err);
           return {
             statusCode: 500,
             body: "PUT is a failure!",
@@ -57,17 +58,5 @@ export const action = async ({request, params}) => {
       statusCode: 500,
       body: err.toString(),
     };
-  }
-
-  /*
-   * utils
-   */
-  function serializeRow(row) {
-    let temp = {};
-    tapestrySheet.headerValues.map((header) => {
-      temp[header] = row[header];
-      return null;
-    });
-    return temp;
   }
 };
