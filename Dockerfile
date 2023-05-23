@@ -6,9 +6,7 @@ COPY package.json package-lock.json ./
 
 RUN npm install
 
-COPY jsconfig.json remix.config.js server.js ./
-
-COPY ./app ./app
+COPY ./ ./
 
 RUN npm run build
 
