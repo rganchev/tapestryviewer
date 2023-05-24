@@ -5,19 +5,19 @@
 exports.up = function(knex) {
   return knex.schema
     .createTable('items', function (table) {
-      table.string('id', 255).notNullable();
-      table.string('title', 255).notNullable();
-      table.string('type', 255).notNullable();
-      table.string('content').notNullable();
+      table.string('id').notNullable();
+      table.string('title').notNullable();
+      table.string('type').notNullable();
+      table.text('content').notNullable();
       table.string('url');
       table.integer('x').notNullable();
       table.integer('y').notNullable();
       table.integer('width').notNullable();
       table.integer('height').notNullable();
-      table.string('linksTo');
+      table.text('linksTo');
       table.boolean('hideTitle');
-      table.string('thumbnail');
-      table.string('controlList');
+      table.text('thumbnail');
+      table.text('controlList');
       table.string('tapestryId').notNullable();
 
       table.foreign('tapestryId')

@@ -6,6 +6,23 @@ services:
       GOOGLE_SERVICE_ACCOUNT_EMAIL: ${GOOGLE_SERVICE_ACCOUNT_EMAIL}
       GOOGLE_PRIVATE_KEY: ${GOOGLE_PRIVATE_KEY}
       GOOGLE_SHEETS_ID: ${GOOGLE_SHEETS_ID}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      NODE_ENV: production
     ports:
       - 3000:3000
-    command: node ./build/index.js
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:15.3-alpine
+    environment:
+      POSTGRES_USER: tapestry
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: tapestry
+    ports:
+      - 5432:5432
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
