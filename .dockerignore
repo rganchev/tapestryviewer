@@ -1,0 +1,8 @@
+node_modules
+.cache
+.env
+build
+public/build
+dev.sqlite3
+Dockerfile
+docker-compose.yml
