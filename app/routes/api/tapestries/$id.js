@@ -1,61 +1,41 @@
 import { Tapestry } from "~/../models/Tapestry";
+import { json } from "@remix-run/node";
+
+export const loader = async ({ params }) => {
+  const tapestry = await Tapestry.query().findById(params.id);
+
+  if (!tapestry) {
+    throw json("Tapestry not found", { status: 404 });
+  }
+ 
+  return json(tapestry);
+};
 
 export const action = async ({request, params}) => {
-  try {
-    switch (request.method) {
-      case "GET":
-        try {
-          const tapestry = Tapestry.query().findById(id);
-          return {
-            statusCode: 200,
-            body: JSON.stringify(tapestry),
-          };
-        } catch(err) {
-          return {
-            statusCode: 500,
-            body: "GET is a failure!",
-          };
+
+  switch (request.method) {
+    case "PUT":
+      try {
+        const tapestry = await request.json();
+        const id = params.id;
+        tapestry.id = id;
+        const numUpdated = await Tapestry.query().findById(id).patch(tapestry);
+        if (numUpdated === 0) {
+          console.log("This tapestry doesn't exist!", id);
         }
-      case "PUT":
-        try {
-          const tapestry = await request.json();
-          const id = params.id;
-          tapestry.id = id;
-          const numUpdated = await Tapestry.query().findById(id).patch(tapestry);
-          if (numUpdated === 0) {
-            console.log("This tapestry doesn't exist!", id);
-          }
-          return {
-            statusCode: 200,
-            body: JSON.stringify({ message: "PUT is a success!" }),
-          };
-        } catch(err) {
-          return {
-            statusCode: 500,
-            body: "PUT is a failure!",
-          };
-        }
-      case "DELETE":
-        try {
-          await Tapestry.query().deleteById(id);
-        } catch(err) {
-          return {
-            statusCode: 500,
-            body: "DELETE is a failure!",
-          };
-        }
-      default:
-        return {
-          statusCode: 500,
-          body: "unrecognized HTTP Method, must be one of GET/PUT/DELETE",
-        };
-    }
-  } catch (err) {
-    console.error("error ocurred in processing ", request);
-    console.error(err);
-    return {
-      statusCode: 500,
-      body: err.toString(),
-    };
+        return json({ message: "PUT is a success!" });
+      } catch(err) {
+        console.log(err);
+        throw json("PUT is a failure!", {status: 500 })
+      }
+    case "DELETE":
+      try {
+        await Tapestry.query().deleteById(id);
+        return json({ message: "DELETE is a success!" }); 
+      } catch(err) {
+        throw json("DELETE is a failure!", {status: 500 });
+      }
+    default:
+      throw json("unrecognized HTTP Method, must be one of PUT/DELETE", {status: 500});
   }
 };

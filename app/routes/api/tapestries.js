@@ -1,38 +1,22 @@
 import { Tapestry } from "~/../models/Tapestry";
+import { json } from "@remix-run/node";
 
 export const action = async ({request}) => {
-  try {
-    switch (request.method) {
-      case "POST":
+  switch (request.method) {
+    case "POST":
+      try {
         const tapestry = await request.json();
-        try {
-          const addedTapestry = await Tapestry.query().insert(tapestry);
-          return {
-            statusCode: 200,
-            body: JSON.stringify({
-              message: `POST Success - added tapestry id ${addedTapestry.id}`,
-              id: addedTapestry.id,
-            }),
-          };
-        }
-        catch(err) {
-          return {
-            statusCode: 500,
-            body: "neither tapestry nor body!",
-          };
-        }
-      default:
-        return {
-          statusCode: 500,
-          body: "unrecognized HTTP Method, must be POST",
-        };
-    }
-  } catch (err) {
-    console.error("error ocurred in processing ", request.url);
-    console.error(err);
-    return {
-      statusCode: 500,
-      body: err.toString(),
-    };
+        const addedTapestry = await Tapestry.query().insert(tapestry);
+        return json({
+          message: `POST Success - added tapestry id ${addedTapestry.id}`,
+          id: addedTapestry.id,
+        });
+      }
+      catch(err) {
+        console.log(err);
+        throw json("POST is a failure!", {status: 500 });
+      }
+    default:
+      throw json("unrecognized HTTP Method, must be POST", {status: 500});
   }
 };
