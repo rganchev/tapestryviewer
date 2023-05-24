@@ -29,7 +29,7 @@ export const action = async ({request, params}) => {
       }
     case "DELETE":
       try {
-        await Item.query().deleteById(id);
+        await Item.query().deleteById(params.id);
         return json({ message: "DELETE is a success!" }); 
       } catch(err) {
         console.log(err);
