@@ -1,4 +1,4 @@
-import { Tapestry } from "~/../models/Tapestry";
+import { Tapestry } from "~/db-models/Tapestry";
 import { json } from "@remix-run/node";
 
 export const action = async ({request}) => {

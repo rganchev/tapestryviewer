@@ -1,4 +1,4 @@
-import { Item } from "~/../models/Item";
+import { Item } from "~/db-models/Item";
 import { json } from "@remix-run/node";
 
 export const loader = async ({ params }) => {
