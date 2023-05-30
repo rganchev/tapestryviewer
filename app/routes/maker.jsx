@@ -233,7 +233,6 @@ export default function MakerPage() {
     const thisItem = {
       id: uuidv4(4),
       title: defaultTitle,
-      slug: slugify(defaultTitle),
       x: segments.length + 1,
     };
     setFocusedItem(thisItem);
