@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLoaderData, useOutletContext } from "remix";
+import { Link, useOutletContext } from "@remix-run/react";
 import { v4 as uuidv4 } from "uuid";
 import { slugify, getColor } from "~/utils/utils.mjs";
 import AddItem from "~/components/AddItem";
@@ -12,22 +12,6 @@ import makerStyles from "~/styles/maker.css";
 import tapestryStyles from "~/styles/tapestries.css";
 import megadraftStyles from "megadraft/dist/css/megadraft.css";
 
-// TODO: on save of existing tapesty: make a new function that does a lot of puts.
-
-const fireWebhook = async (url) => {
-  console.log("firing webhook:", url);
-  await fetch(url, {
-    method: "POST",
-  }).then((res) => {
-    console.log(res);
-  });
-};
-
-export const loader = () => {
-  const buildhook = process.env.BUILD_HOOK;
-  return { buildhook: buildhook };
-};
-
 export const links = () => {
   return [
     { rel: "stylesheet", href: tapestryStyles },
@@ -37,7 +21,6 @@ export const links = () => {
 };
 
 export default function MakerPage() {
-  const { buildhook } = useLoaderData();
   const { tapestries } = useOutletContext();
   const [isNewTapestry, setIsNewTapestry] = useState(true);
   const [title, setTitle] = useState("New tapestry");
@@ -118,7 +101,7 @@ export default function MakerPage() {
           console.log(segment.controlList);
           return {
             ...segment,
-            tapestryId: row.slug,
+            tapestryId: row.id,
             linksTo: segment.linksTo.join(","), // TODO: this needs to change to an ID
             controlList:
               JSON.stringify(segment.controlList) === "[]"
@@ -129,9 +112,9 @@ export default function MakerPage() {
       };
       // console.log(payload);
       setMessage(`Sending tapestry data: \n\n ${JSON.stringify(row)}`);
-      await fetch("/.netlify/functions/googlesheets", {
+      await fetch("/api/tapestries", {
         method: "POST",
-        body: JSON.stringify({ tapestry: payload.tapestry }),
+        body: JSON.stringify(payload.tapestry),
       })
         .then((res) => res.json())
         .then(async (response) => {
@@ -144,9 +127,9 @@ export default function MakerPage() {
               )}`
             );
             // console.log(payload.items[i]);
-            await fetch("/.netlify/functions/googlesheets", {
+            await fetch("/api/items", {
               method: "POST",
-              body: JSON.stringify({ item: payload.items[i] }),
+              body: JSON.stringify(payload.items[i]),
             })
               .then((res) => res.json())
               .then((response) => {
@@ -164,7 +147,6 @@ export default function MakerPage() {
           setMessage(
             `Tapestry uploaded correctly. Rebuilding site – go <a href="/">here</a> in about thirty seconds.`
           );
-          fireWebhook(buildhook);
         })
         .catch((error) => {
           setMessage("Error adding tapestry!");
@@ -199,9 +181,9 @@ export default function MakerPage() {
       };
       console.log("Payload: ", payload);
       // TODO: make new function to send in modified data, add in new data
-      await fetch(`/.netlify/functions/googlesheets/${row.id}`, {
+      await fetch(`/api/tapestries/${payload.tapestry.id}`, {
         method: "PUT",
-        body: JSON.stringify({ tapestry: payload.tapestry }),
+        body: JSON.stringify(payload.tapestry),
       })
         .then((res) => res.json())
         .then(async (response) => {
@@ -215,10 +197,10 @@ export default function MakerPage() {
             );
             // console.log(payload.items[i]);
             await fetch(
-              `/.netlify/functions/googlesheets/${payload.items[i].id}`,
+              `/api/items/${payload.items[i].id}`,
               {
                 method: "PUT",
-                body: JSON.stringify({ item: payload.items[i] }),
+                body: JSON.stringify(payload.items[i]),
               }
             )
               .then((res) => res.json())
@@ -237,7 +219,6 @@ export default function MakerPage() {
           setMessage(
             `Tapestry modified correctly. Rebuilding site – go <a href="/">here</a> in about thirty seconds.`
           );
-          fireWebhook(buildhook);
         })
         .catch((error) => {
           setMessage("Error adding tapestry!");
@@ -252,7 +233,6 @@ export default function MakerPage() {
     const thisItem = {
       id: uuidv4(4),
       title: defaultTitle,
-      slug: slugify(defaultTitle),
       x: segments.length + 1,
     };
     setFocusedItem(thisItem);
